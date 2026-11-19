@@ -18,7 +18,7 @@ This project is an **end-to-end, high-performance Java 21 & Spring Boot backend*
 5. **Dynamic User & Folder Generation:**
    - Users are created dynamically by the Master Admin (`/adduser <Name> <Phone>`).
    - Upon registration, their personal Drive vault directory is dynamically generated:  
-     `drive/chatbot_documents/{UserName}/`
+     `drive/family_chatbot/{UserName}/`
 6. **Document Deletion Policy (Strict Protection):**
    - **Regular Users CANNOT delete documents.** Regular users can only:
      - **Select** (choose a document service like Aadhaar, PAN, DL)
@@ -28,7 +28,7 @@ This project is an **end-to-end, high-performance Java 21 & Spring Boot backend*
    - **Only the Master Admin can delete documents** (`/delete <DOC-ID>`).
 7. **Document Services Workflow ("Hii" Initiation):**
    - User starts session by sending `"Hii"` (or `"hii"`, `"hi"`, `"Hi"`).
-   - Bot greets user by name and opens their Drive path: `drive/chatbot_documents/{UserName}/`.
+   - Bot greets user by name and opens their Drive path: `drive/family_chatbot/{UserName}/`.
    - Bot displays Document Services Menu:
      - `1️⃣ Aadhaar Card`
      - `2️⃣ PAN Card`
@@ -44,7 +44,7 @@ This project is an **end-to-end, high-performance Java 21 & Spring Boot backend*
    - Master Admin instantly receives **Email notification** (`hrudaypreetham10@gmail.com`) and **WhatsApp alert** (`+91 8790208445`) with quick actions:  
      • `/approve <DOC-ID>`  
      • `/reject <DOC-ID> <reason>`
-   - Once approved, the document is automatically synced into `drive/chatbot_documents/{UserName}/{CleanDocName}` and the member is notified.
+   - Once approved, the document is automatically synced into `drive/family_chatbot/{UserName}/{CleanDocName}` and the member is notified.
 9. **Re-Downloading Approved Documents:**
    - Users can download their approved documents anytime via `/download <DOC-ID>`.
    - The bot delivers the file directly into their WhatsApp chat.
@@ -81,7 +81,7 @@ This project is an **end-to-end, high-performance Java 21 & Spring Boot backend*
   - The chatbot uses **Google Drive for Desktop integration** or **Google Apps Script Cloud Sync (Option B)**.
   - Sign into Google with `hrudaypreetham10@gmail.com`.
   - Point `storage.drive-sync-dir` in `application.yml` to your local Google Drive folder, or configure `apps-script-webhook-url`.
-  - When the Admin approves any document, it is saved locally to `drive/chatbot_documents/{UserName}/{CleanDocName}` inside that directory, and automatically synchronizes it to `hrudaypreetham10@gmail.com`'s Google Drive in the cloud!
+  - When the Admin approves any document, it is saved locally to `drive/family_chatbot/{UserName}/{CleanDocName}` inside that directory, and automatically synchronizes it to `hrudaypreetham10@gmail.com`'s Google Drive in the cloud!
   - **Zero API Quota / Zero Billing Cost:** Google Drive handles sync natively using Google's free 15 GB storage.
 
 ---
@@ -108,7 +108,7 @@ This project is an **end-to-end, high-performance Java 21 & Spring Boot backend*
 ### 👤 Regular Member Commands (Select, View, Download)
 | Command / Input | What It Does |
 | :--- | :--- |
-| `Hii` / `hii` | Starts session, shows personal Drive folder path (`drive/chatbot_documents/{UserName}/`), and displays document services menu |
+| `Hii` / `hii` | Starts session, shows personal Drive folder path (`drive/family_chatbot/{UserName}/`), and displays document services menu |
 | `1` or `aadhaar` | Shows your Aadhaar Card details, approval status, and Drive path |
 | `2` or `pan` | Shows your PAN Card details, approval status, and Drive path |
 | `3` or `license` | Shows your Driving License details |
@@ -196,12 +196,12 @@ The application is now running on your computer at `http://localhost:8080`.
 3. Click the quick button **`📊 "/analytics"`** (or type `/analytics`).
    - *Result:* The bot draws visual bar charts showing user logins and service usage.
 4. Type: `/adduser Brother +919876543219` and press Enter.
-   - *Result:* The bot registers your brother and creates his personal Drive folder `drive/chatbot_documents/Brother/`.
+   - *Result:* The bot registers your brother and creates his personal Drive folder `drive/family_chatbot/Brother/`.
 
 #### Scenario B: Your Family Member (e.g. Dad)
 1. Click the top button: **`👨 Dad`** (Phone: `+91 9876543211`).
 2. Type **`hii`** and press Enter.
-   - *Result:* The bot greets him: *"Hii Dad! Your Personal Drive Vault: drive/chatbot_documents/Dad/"*.
+   - *Result:* The bot greets him: *"Hii Dad! Your Personal Drive Vault: drive/family_chatbot/Dad/"*.
 3. Type **`1`** and press Enter.
    - *Result:* Shows Aadhaar Card documents for Dad.
 4. Type **`9`** and press Enter.
@@ -282,7 +282,7 @@ Stores whitelisted family members and their document permissions:
 | `name` | `VARCHAR(255)` | Not Null | Family member display name (e.g. Dad, Mom, Usha) |
 | `phone_number` | `VARCHAR(20)` | Not Null, Unique Index | Normalized Indian phone number (`918790208445`) |
 | `role` | `VARCHAR(20)` | Not Null | `ADMIN` or `MEMBER` |
-| `folder_name` | `VARCHAR(255)` | Not Null | Google Drive folder name (`drive/chatbot_documents/{folder_name}/`) |
+| `folder_name` | `VARCHAR(255)` | Not Null | Google Drive folder name (`drive/family_chatbot/{folder_name}/`) |
 | `allowed_services` | `VARCHAR(500)` | Comma-separated | Allowed services (e.g. `AADHAAR,PAN,DRIVING_LICENSE,PASSPORT,HEALTH,OTHER`) |
 | `is_active` | `BOOLEAN` | Not Null (Default: `true`) | Active whitelist status |
 | `created_at` | `TIMESTAMP` | Not Null | Record creation timestamp |
@@ -302,7 +302,7 @@ Stores document records, encryption hashes, and Google Drive sync locations:
 | `sender_phone_number`| `VARCHAR(20)` | Not Null | Member's phone who owns this document |
 | `sender_name` | `VARCHAR(255)` | Nullable | Name of the uploader |
 | `status` | `VARCHAR(30)` | Not Null | `APPROVED`, `PENDING_APPROVAL`, or `REJECTED` |
-| `owner_drive_folder` | `VARCHAR(255)` | Not Null | Synced Drive folder (`drive/chatbot_documents/{user}/`) |
+| `owner_drive_folder` | `VARCHAR(255)` | Not Null | Synced Drive folder (`drive/family_chatbot/{user}/`) |
 | `created_at` | `TIMESTAMP` | Not Null | Upload timestamp |
 
 #### 3. `AUDIT_LOG` (Security, Commands & Issues Log)
@@ -348,11 +348,11 @@ flowchart TD
 1. **User Initiation:** User opens WhatsApp and sends a message to `+91 8790208445`.
 2. **Access Control:** System validates sender against `FAMILY_MEMBER`. Non-whitelisted chats are completely ignored (100% silent).
 3. **Strict 'hii' Gate:** Whitelisted family members must begin by typing `hii` (case-insensitive).
-4. **Vault Discovery:** When Option `1` (Aadhaar) or Option `7` (List Files) is selected, the system actively checks both the database AND scans the physical Google Drive folder (`drive/chatbot_documents/{User}/`).
+4. **Vault Discovery:** When Option `1` (Aadhaar) or Option `7` (List Files) is selected, the system actively checks both the database AND scans the physical Google Drive folder (`drive/family_chatbot/{User}/`).
 5. **Issues Inbox Flow:**
    - User types `9` or `report`: Bot prompts for issue description.
    - User replies with problem: Server logs a prominent alert to the terminal console, notifies Master Admin email (`hrudaypreetham10@gmail.com`) and WhatsApp (`+91 8790208445`), and posts the ticket to the **Issues Inbox** in the React dashboard.
 6. **Cloud Drive Sync (Zero Cost):**
-   - When a user is created (e.g. `usha`), their folder `chatbot_documents/usha/` is pre-created in Google Drive and local mirror.
+   - When a user is created (e.g. `usha`), their folder `family_chatbot/usha/` is pre-created in Google Drive and local mirror.
    - Decrypted copies sync to Google Drive cloud via free Google Apps Script to `hrudaypreetham10@gmail.com`.
 7. **Session Expiry:** Session expires after 15 minutes of inactivity or immediately when the user replies `bye` or `exit`. Subsequent messages return to normal human chatting.

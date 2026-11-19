@@ -51,12 +51,8 @@ whatsapp:
   admin-email: "hrudaypreetham10@gmail.com"
   enable-email-notification: true
 
-  # 2. Whitelisted Family Members:
-  # Can save files/photos, but can ONLY search, list, and view their OWN documents.
-  # Cannot access or view documents uploaded by other family members.
-  whitelist:
-    - "919876543211"
-    - "919876543212"
+  # 2. Whitelisted Family Members (Admin dynamically adds users via /adduser):
+  whitelist: []
 
   # Security response for non-whitelisted numbers
   notify-unauthorized: true

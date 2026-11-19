@@ -81,7 +81,7 @@ public class MailNotificationService {
                 -------------
                 • User Name:   %s
                 • User Phone:  +%s
-                • Drive Vault: drive/chatbot_documents/%s/
+                • Drive Vault: drive/family_chatbot/%s/
 
                 Reported Issue:
                 ----------------

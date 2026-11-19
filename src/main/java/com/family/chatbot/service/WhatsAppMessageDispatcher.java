@@ -143,7 +143,7 @@ public class WhatsAppMessageDispatcher {
                             📁 *File Name:* %s
                             🏷️ *Category:* %s
                             ✅ *Status:* Already Approved & Synced to Drive
-                            📂 *Drive Path:* `drive/chatbot_documents/%s/%s`
+                            📂 *Drive Path:* `drive/family_chatbot/%s/%s`
                             
                             💡 No duplicate copy was saved to conserve your drive storage.
                             Reply */download %s* anytime to download this file!
@@ -214,7 +214,7 @@ public class WhatsAppMessageDispatcher {
                         📁 *File:* %s
                         🏷️ *Category:* %s
                         📦 *Size:* %s
-                        📂 *Drive Vault:* `drive/chatbot_documents/Admin/`
+                        📂 *Drive Vault:* `drive/family_chatbot/Admin/`
                         📅 *Saved:* %s
                         🔄 *Drive Synced:* %s
                         %s
@@ -245,7 +245,7 @@ public class WhatsAppMessageDispatcher {
                         %s
                         The Master Admin (+%s) has been alerted via Email & WhatsApp.
                         Once approved, your document will be synced into your Google Drive vault:
-                        📂 `drive/chatbot_documents/%s/`
+                        📂 `drive/family_chatbot/%s/`
                         """,
                         savedItem.getDocId(),
                         savedItem.getCategoryTag(),

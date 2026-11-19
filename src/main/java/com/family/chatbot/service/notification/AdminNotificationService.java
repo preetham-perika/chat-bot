@@ -83,7 +83,7 @@ public class AdminNotificationService {
                 ✅ *Document Approved by Admin!*
                 ━━━━━━━━━━━━━━━━━━━━
                 🎉 Your document *%s* (%s) has been approved and moved into your official Google Drive vault:
-                📂 `drive/chatbot_documents/%s/`
+                📂 `drive/family_chatbot/%s/`
                 
                 Reply with */get %s* anytime to retrieve it.
                 """,
@@ -129,7 +129,7 @@ public class AdminNotificationService {
                     📝 *Issue Description:*
                     "%s"
                     
-                    📂 *User Vault:* `drive/chatbot_documents/%s/`
+                    📂 *User Vault:* `drive/family_chatbot/%s/`
                     """, memberName, memberPhone, issueDescription, memberName);
 
             whatsAppProvider.sendTextMessage(adminPhone, waMessage);

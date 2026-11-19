@@ -156,7 +156,7 @@ public class WhatsAppChatbotIntegrationTest {
                         .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.botReply").value(org.hamcrest.Matchers.containsString("Family Member Created Successfully!")))
-                .andExpect(jsonPath("$.botReply").value(org.hamcrest.Matchers.containsString("drive/chatbot_documents/Sister/")));
+                .andExpect(jsonPath("$.botReply").value(org.hamcrest.Matchers.containsString("drive/family_chatbot/Sister/")));
 
         // Verify Sister is now registered dynamically in the database
         assertTrue(familyMemberRepository.existsByPhoneNumber("919876543215"));

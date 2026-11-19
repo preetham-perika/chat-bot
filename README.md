@@ -15,12 +15,12 @@ A private, secure, and fast Java 21 & Spring Boot 3 backend application that con
   - Zero duplicate numbers: database and service-level uniqueness guarantee.
 - **Dynamic User & Folder Generation:**
   - Admin dynamically adds members (`/adduser <Name> <+91Phone>`).
-  - Personal Google Drive vaults are dynamically created: `drive/chatbot_documents/{UserName}/`.
+  - Personal Google Drive vaults are dynamically created: `drive/family_chatbot/{UserName}/`.
 - **User Document Protection:**
   - **Regular users CANNOT delete documents.** Members can only select, view, and download documents.
   - Deletion is strictly reserved for Master Admin (`/delete <DOC-ID>`).
 - **"Hii" Workflow & Document Services:**
-  - Starts with `"Hii"` -> Bot opens `drive/chatbot_documents/{UserName}/` and presents document services:
+  - Starts with `"Hii"` -> Bot opens `drive/family_chatbot/{UserName}/` and presents document services:
     1: Aadhaar, 2: PAN, 3: Driving License, 4: Passport, 5: Health, 6: Other, 7: List Files, 8: Stats.
 - **Admin Approval Workflow:**
   - Member uploads start as `PENDING_APPROVAL`.
@@ -94,10 +94,10 @@ This is a built-in WhatsApp testing simulator with real-time audit logging and q
    - Click the **👑 Admin** button.
    - Click the **👋 "hii"** chip. The bot responds with Admin tools: `/pending`, `/analytics`, `/adduser`, `/delete`.
    - Click the **📊 "/analytics"** chip. The bot renders visual ASCII/Unicode bar charts showing user logins and service usage.
-   - Type `/adduser Brother +919876543219` and send. The bot dynamically registers the new user and initializes their Drive folder `drive/chatbot_documents/Brother/`.
+   - Type `/adduser Brother +919876543219` and send. The bot dynamically registers the new user and initializes their Drive folder `drive/family_chatbot/Brother/`.
 2. **Test Regular Member Dad (`+91 9876543211`):**
    - Click the **👨 Dad** button.
-   - Click the **👋 "hii"** chip. Notice the greeting: *"Hii Dad! Your Personal Drive Vault: drive/chatbot_documents/Dad/"*.
+   - Click the **👋 "hii"** chip. Notice the greeting: *"Hii Dad! Your Personal Drive Vault: drive/family_chatbot/Dad/"*.
    - Type `1` -> Views Aadhaar Card service.
    - Type `9` -> Opens *"Any Issues? / Report a Problem"* showing the Admin email, WhatsApp alert, and clickable call link `https://wa.me/918790208445`.
    - Type `/delete DOC-1001` -> The bot strictly blocks deletion: *"Only the Master Admin can delete documents"*.
@@ -173,9 +173,9 @@ curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8080/api/documents
 ### Method 5: Google Drive Cloud Sync Verification
 Whenever an approved document is saved by the bot:
 1. Open your Google Drive at [drive.google.com](https://drive.google.com) signed in as **`hrudaypreetham10@gmail.com`**.
-2. You will see the root folder: **`chatbot_documents/`**.
-3. Inside, individual subfolders are automatically created per user (e.g. `chatbot_documents/Dad/`, `chatbot_documents/Sister/`).
-4. On your local machine, an offline mirror is also organized at `./data/drive-sync/chatbot_documents/{UserName}/`.
+2. You will see the root folder: **`family_chatbot/`**.
+3. Inside, individual subfolders are automatically created per user (e.g. `family_chatbot/Dad/`, `family_chatbot/Sister/`).
+4. On your local machine, an offline mirror is also organized at `./data/drive-sync/family_chatbot/{UserName}/`.
 5. The original file is stored with military-grade **AES-256-GCM encryption at rest** in `./data/storage/`.
 
 ---

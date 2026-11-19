@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 /**
  * Service that synchronizes files directly to:
- * 1. Local drive directory (e.g. ./data/drive-sync/chatbot_documents/{UserName}/)
+ * 1. Local drive directory (e.g. ./data/drive-sync/family_chatbot/{UserName}/)
  * 2. Option B (100% Free): Google Apps Script Webhook directly into hrudaypreetham10@gmail.com Google Drive Cloud!
  *
  * Ensures the Admin has an organized view per family member both locally and in Google Drive cloud.
@@ -66,9 +66,9 @@ public class LocalDriveSyncService implements DriveSyncService {
     public void init() {
         if (properties.isEnableDriveSync()) {
             try {
-                Path drivePath = properties.getDriveSyncPath().resolve("chatbot_documents");
+                Path drivePath = properties.getDriveSyncPath().resolve("family_chatbot");
                 Files.createDirectories(drivePath);
-                Path rootDrivePath = java.nio.file.Paths.get("./drive/chatbot_documents");
+                Path rootDrivePath = java.nio.file.Paths.get("./drive/family_chatbot");
                 Files.createDirectories(rootDrivePath);
                 log.info("Drive Sync root directories initialized at: {} and {}", drivePath, rootDrivePath);
             } catch (IOException e) {
@@ -91,14 +91,14 @@ public class LocalDriveSyncService implements DriveSyncService {
         byte[] rawBytes = Files.readAllBytes(sourceFile);
         byte[] plainBytes = (encryptionService != null) ? encryptionService.decrypt(rawBytes) : rawBytes;
 
-        // 1. Save to local drive mirror under drive/chatbot_documents/{UserName}/
-        Path targetMemberDir = properties.getDriveSyncPath().resolve("chatbot_documents").resolve(memberFolder);
+        // 1. Save to local drive mirror under drive/family_chatbot/{UserName}/
+        Path targetMemberDir = properties.getDriveSyncPath().resolve("family_chatbot").resolve(memberFolder);
         Files.createDirectories(targetMemberDir);
 
         Path targetFile = targetMemberDir.resolve(sourceFile.getFileName());
         Files.write(targetFile, plainBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
-        log.info("Synced {} to local drive folder: drive/chatbot_documents/{}/{}",
+        log.info("Synced {} to local drive folder: drive/family_chatbot/{}/{}",
                 sourceFile.getFileName(), memberFolder, targetFile.getFileName());
 
         // 2. Option B: Cloud Sync to hrudaypreetham10@gmail.com Google Drive via Google Apps Script
@@ -144,7 +144,7 @@ public class LocalDriveSyncService implements DriveSyncService {
             try (Response response = httpClient.newCall(request).execute()) {
                 if (response.isSuccessful() && response.body() != null) {
                     String respStr = response.body().string();
-                    log.info("☁️ [Google Apps Script] Successfully synced {} to Cloud Google Drive (chatbot_documents/{}): {}",
+                    log.info("☁️ [Google Apps Script] Successfully synced {} to Cloud Google Drive (family_chatbot/{}): {}",
                             fileName, memberFolder, respStr);
                     return true;
                 } else {
@@ -165,25 +165,23 @@ public class LocalDriveSyncService implements DriveSyncService {
         try {
             String safe = sanitizeFolder(folderName);
 
-            // 1. Local drive directory creation
-            Path userDir = properties.getDriveSyncPath().resolve("chatbot_documents").resolve(safe);
+            // 1. Local drive directory creation under family_chatbot/{safe}
+            Path userDir = properties.getDriveSyncPath().resolve("family_chatbot").resolve(safe);
             Files.createDirectories(userDir);
 
             // Also create in root drive directory for convenience
-            Path rootDriveDir = java.nio.file.Paths.get("./drive/chatbot_documents").resolve(safe);
+            Path rootDriveDir = java.nio.file.Paths.get("./drive/family_chatbot").resolve(safe);
             Files.createDirectories(rootDriveDir);
 
             log.info("Initialized local Google Drive member directories at: {} and {}", userDir, rootDriveDir);
 
-            // 2. Cloud Google Drive folder creation via Apps Script in hrudaypreetham10@gmail.com Drive
+            // 2. Cloud Google Drive empty folder creation via Apps Script in hrudaypreetham10@gmail.com Drive
             String gasUrl = properties.getAppsScriptWebhookUrl();
             if (gasUrl != null && !gasUrl.isBlank()) {
                 new Thread(() -> {
                     try {
-                        byte[] initBytes = ("Vault folder initialized for " + safe + " at " + java.time.LocalDateTime.now())
-                                .getBytes(java.nio.charset.StandardCharsets.UTF_8);
-                        uploadToGoogleAppsScript(initBytes, ".vault_init.txt", safe, "system");
-                        log.info("☁️ [Google Drive] Pre-created cloud folder 'chatbot_documents/{}' in hrudaypreetham10@gmail.com Drive", safe);
+                        sendFolderActionToGoogleAppsScript(safe, "CREATE_FOLDER");
+                        log.info("☁️ [Google Drive] Pre-created empty cloud folder 'family_chatbot/{}' in hrudaypreetham10@gmail.com Drive", safe);
                     } catch (Exception ex) {
                         log.warn("Non-fatal: Cloud folder pre-creation for {} error: {}", safe, ex.getMessage());
                     }
@@ -191,6 +189,91 @@ public class LocalDriveSyncService implements DriveSyncService {
             }
         } catch (IOException e) {
             log.warn("Could not pre-create member folder {}: {}", folderName, e.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteMemberFolder(String folderName) {
+        if (!properties.isEnableDriveSync() || folderName == null || folderName.isBlank()) return;
+        try {
+            String safe = sanitizeFolder(folderName);
+
+            // 1. Local drive directory deletion under family_chatbot/{safe}
+            Path userDir = properties.getDriveSyncPath().resolve("family_chatbot").resolve(safe);
+            deleteRecursively(userDir);
+
+            Path rootDriveDir = java.nio.file.Paths.get("./drive/family_chatbot").resolve(safe);
+            deleteRecursively(rootDriveDir);
+
+            log.info("Deleted local Google Drive member directories at: {} and {}", userDir, rootDriveDir);
+
+            // 2. Cloud Google Drive folder deletion via Apps Script
+            String gasUrl = properties.getAppsScriptWebhookUrl();
+            if (gasUrl != null && !gasUrl.isBlank()) {
+                new Thread(() -> {
+                    try {
+                        sendFolderActionToGoogleAppsScript(safe, "DELETE_FOLDER");
+                        log.info("☁️ [Google Drive] Trashed cloud folder 'family_chatbot/{}' in hrudaypreetham10@gmail.com Drive", safe);
+                    } catch (Exception ex) {
+                        log.warn("Non-fatal: Cloud folder deletion for {} error: {}", safe, ex.getMessage());
+                    }
+                }, "DriveFolderDel-" + safe).start();
+            }
+        } catch (Exception e) {
+            log.warn("Could not delete member folder {}: {}", folderName, e.getMessage());
+        }
+    }
+
+    /**
+     * Sends a folder action (CREATE_FOLDER or DELETE_FOLDER) to Google Apps Script Webhook.
+     */
+    public boolean sendFolderActionToGoogleAppsScript(String memberFolder, String action) {
+        String gasUrl = properties.getAppsScriptWebhookUrl();
+        if (gasUrl == null || gasUrl.isBlank()) {
+            return false;
+        }
+
+        try {
+            Map<String, Object> payload = Map.of(
+                    "secret", properties.getAppsScriptSecret() != null ? properties.getAppsScriptSecret() : "",
+                    "userName", memberFolder,
+                    "action", action
+            );
+
+            String jsonBody = objectMapper.writeValueAsString(payload);
+            RequestBody requestBody = RequestBody.create(jsonBody, JSON);
+
+            Request request = new Request.Builder()
+                    .url(gasUrl)
+                    .post(requestBody)
+                    .build();
+
+            try (Response response = httpClient.newCall(request).execute()) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String respStr = response.body().string();
+                    log.info("☁️ [Google Apps Script] Action {} on family_chatbot/{}: {}", action, memberFolder, respStr);
+                    return true;
+                } else {
+                    log.warn("⚠️ [Google Apps Script] {} returned HTTP {}: {}", action, response.code(), response.message());
+                }
+            }
+        } catch (Exception e) {
+            log.warn("⚠️ [Google Apps Script] {} error for {}: {}", action, memberFolder, e.getMessage());
+        }
+        return false;
+    }
+
+    private void deleteRecursively(Path path) {
+        if (path == null || !Files.exists(path)) return;
+        try {
+            if (Files.isDirectory(path)) {
+                try (Stream<Path> entries = Files.list(path)) {
+                    entries.forEach(this::deleteRecursively);
+                }
+            }
+            Files.deleteIfExists(path);
+        } catch (IOException e) {
+            log.warn("Could not delete path {}: {}", path, e.getMessage());
         }
     }
 
@@ -205,7 +288,7 @@ public class LocalDriveSyncService implements DriveSyncService {
             return Collections.emptyList();
         }
         try {
-            Path userDir = properties.getDriveSyncPath().resolve("chatbot_documents").resolve(sanitizeFolder(folderName));
+            Path userDir = properties.getDriveSyncPath().resolve("family_chatbot").resolve(sanitizeFolder(folderName));
             if (!Files.exists(userDir) || !Files.isDirectory(userDir)) {
                 return Collections.emptyList();
             }

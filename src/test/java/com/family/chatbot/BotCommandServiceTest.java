@@ -158,7 +158,7 @@ class BotCommandServiceTest {
     void testGreeting_Hii_DisplaysUserDrivePathAndServicesMenu() {
         String greeting = botCommandService.processCommand("Hii", MEMBER_A_PHONE, "Dad");
         assertTrue(greeting.contains("Hii"));
-        assertTrue(greeting.contains("drive/chatbot_documents/"));
+        assertTrue(greeting.contains("drive/family_chatbot/"));
         assertTrue(greeting.contains("1️⃣ *Aadhaar Card*"));
         assertTrue(greeting.contains("2️⃣ *PAN Card*"));
         assertTrue(greeting.contains("3️⃣ *Driving License*"));

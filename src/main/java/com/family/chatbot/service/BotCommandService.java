@@ -388,7 +388,7 @@ public class BotCommandService {
         StringBuilder sb = new StringBuilder();
         sb.append("👋 *Hii ").append(displayName).append("!*\n");
         sb.append("Welcome back to your Private Family Document Vault.\n\n");
-        sb.append("📂 *Your Personal Drive Vault:* `drive/chatbot_documents/").append(folderName).append("/`\n\n");
+        sb.append("📂 *Your Personal Drive Vault:* `drive/family_chatbot/").append(folderName).append("/`\n\n");
 
         sb.append("📋 *Select a Document Service:*\n");
         if (isAdmin || whitelistService.hasService(senderPhone, "AADHAAR")) {
@@ -488,7 +488,7 @@ public class BotCommandService {
                                 ━━━━━━━━━━━━━━━━━━━━
                                 📁 *File Name:* %s
                                 📦 *Size:* %s
-                                📂 *Drive Folder:* `drive/chatbot_documents/%s/%s`
+                                📂 *Drive Folder:* `drive/family_chatbot/%s/%s`
                                 ☁️ *Cloud Status:* Verified in Google Drive Cloud Vault
                                 """, categoryDisplayName, p.getFileName().toString(), formatSize(size), folderName, p.getFileName().toString());
                     } catch (IOException ignored) {}
@@ -499,7 +499,7 @@ public class BotCommandService {
                     📭 *No %s Found in Your Vault*
                     ━━━━━━━━━━━━━━━━━━━━
                     We checked both your Vault Database and your Google Drive folder:
-                    📂 `drive/chatbot_documents/%s/`
+                    📂 `drive/family_chatbot/%s/`
                     
                     No %s was found.
                     
@@ -546,7 +546,7 @@ public class BotCommandService {
                 📁 *File:* %s
                 📦 *Size:* %s
                 📅 *Uploaded:* %s
-                📂 *Drive Path:* `drive/chatbot_documents/%s/%s`
+                📂 *Drive Path:* `drive/family_chatbot/%s/%s`
                 ✅ *Status:* Approved & Synced to Drive
                 
                 📥 *To download this document:*
@@ -600,7 +600,7 @@ public class BotCommandService {
         return String.format("""
                 📥 *Downloading Document:* *%s* (%s)
                 📦 *Size:* %s
-                📂 *Drive Path:* `drive/chatbot_documents/%s/%s`
+                📂 *Drive Path:* `drive/family_chatbot/%s/%s`
                 
                 Sending the file directly to your WhatsApp chat!
                 """, item.getOriginalFileName(), item.getDocId(),
@@ -691,7 +691,7 @@ public class BotCommandService {
                     🆔 *Doc ID:* %s
                     📄 *File:* %s
                     👤 *Member:* %s (+%s)
-                    📂 *Drive Vault:* `drive/chatbot_documents/%s/`
+                    📂 *Drive Vault:* `drive/family_chatbot/%s/`
                     
                     The document has been synced to Google Drive and the member has been notified!
                     """, approved.getDocId(), approved.getOriginalFileName(),
@@ -796,7 +796,7 @@ public class BotCommandService {
         String userFolder = whitelistService.getUserFolderName(senderPhone);
         List<Path> driveFiles = storageService.listDriveFiles(userFolder);
         if (!driveFiles.isEmpty()) {
-            sb.append("☁️ *Files Present in Google Drive (`drive/chatbot_documents/").append(userFolder).append("/`):*\n");
+            sb.append("☁️ *Files Present in Google Drive (`drive/family_chatbot/").append(userFolder).append("/`):*\n");
             for (Path df : driveFiles) {
                 try {
                     long sz = Files.size(df);
@@ -900,7 +900,7 @@ public class BotCommandService {
                 📦 *Size:* %s
                 📅 *Uploaded:* %s
                 👤 *Uploaded By:* %s (+%s)
-                📂 *Drive Folder:* `drive/chatbot_documents/%s/`
+                📂 *Drive Folder:* `drive/family_chatbot/%s/`
                 🔄 *Drive Synced:* %s
                 ⏳ *Approval Status:* %s
                 📝 *Note / Caption:* %s
@@ -1135,7 +1135,7 @@ public class BotCommandService {
                     ━━━━━━━━━━━━━━━━━━━━
                     👤 *Name:* %s
                     📱 *Phone:* +%s
-                    📂 *Drive Folder:* `drive/chatbot_documents/%s/`
+                    📂 *Drive Folder:* `drive/family_chatbot/%s/`
                     🔒 *Security:* Number-bias isolation active
                     """,
                     member.getName(), member.getPhoneNumber(), member.getFolderName());
@@ -1183,7 +1183,7 @@ public class BotCommandService {
             String roleBadge = m.getRole() == UserRole.ADMIN ? "👑 [ADMIN]" : "👤 [MEMBER]";
             sb.append(roleBadge).append(" *").append(m.getName()).append("*\n")
               .append("   📱 Phone: +").append(m.getPhoneNumber()).append("\n")
-              .append("   📂 Drive Folder: `drive/chatbot_documents/").append(m.getFolderName()).append("/`\n\n");
+              .append("   📂 Drive Folder: `drive/family_chatbot/").append(m.getFolderName()).append("/`\n\n");
         }
 
         sb.append("💡 *Admin Actions:*\n• /adduser <name> <phone>\n• /removeuser <phone>\n• /modifyuser <phone> <newName>");
@@ -1209,7 +1209,7 @@ public class BotCommandService {
         if (updated) {
             auditLogService.record(AuditEventType.COMMAND, AuditStatus.SUCCESS, senderPhone, roleName,
                     "MODIFY_USER", null, "Renamed member +" + phone + " to " + newName);
-            return "✅ Family member updated to *" + newName + "* (Drive folder: `drive/chatbot_documents/" + newName + "/`).";
+            return "✅ Family member updated to *" + newName + "* (Drive folder: `drive/family_chatbot/" + newName + "/`).";
         } else {
             return "❌ Member not found with phone +" + phone;
         }

@@ -224,7 +224,7 @@ export default function UserDocumentsVault({ activePersona }) {
                   </h2>
                   <div style={{ display: 'flex', gap: '16px', marginTop: '6px', fontSize: '13px', color: 'var(--text-secondary)' }}>
                     <span>📞 Phone: <strong style={{ color: 'var(--text-primary)' }}>+{selectedUser.phoneNumber}</strong></span>
-                    <span>☁️ Google Drive Folder: <strong style={{ color: 'var(--wa-teal)' }}>drive/chatbot_documents/{selectedUser.folderName}/</strong></span>
+                    <span>☁️ Google Drive Folder: <strong style={{ color: 'var(--wa-teal)' }}>drive/family_chatbot/{selectedUser.folderName}/</strong></span>
                     <span>🔒 Status: <strong style={{ color: 'var(--wa-teal)' }}>AES-256 Encrypted</strong></span>
                   </div>
                 </div>

@@ -252,6 +252,9 @@ public class WhitelistService {
             }
             member.setActive(false);
             memberRepository.save(member);
+            if (driveSyncService != null) {
+                driveSyncService.deleteMemberFolder(member.getFolderName());
+            }
             return true;
         }
         return false;

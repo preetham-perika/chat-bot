@@ -68,7 +68,7 @@ class LocalDriveSyncServiceTest {
         Path synced = syncService.syncFile(testFile, "documents", "Dad");
         assertNotNull(synced);
         assertTrue(Files.exists(synced));
-        assertTrue(synced.toString().contains("chatbot_documents/Dad/sample.pdf"));
+        assertTrue(synced.toString().contains("family_chatbot/Dad/sample.pdf"));
     }
 
     @Test

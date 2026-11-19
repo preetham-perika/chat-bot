@@ -33,7 +33,7 @@ public class OpenApiConfig {
                                 - **AES-256-GCM Encryption at Rest:** Identity files (Aadhaar, PAN, Passports) are encrypted on disk.
                                 - **Number-Bias Isolation:** Family members access ONLY their own documents; Master Admin has full management access.
                                 - **Duplicate Upload Protection:** SHA-256 binary checksums prevent duplicate files and redundant alerts.
-                                - **Cloud Sync:** Direct 100% free Google Apps Script sync into Google Drive under `chatbot_documents/{UserName}/`.
+                                - **Cloud Sync:** Direct 100% free Google Apps Script sync into Google Drive under `family_chatbot/{UserName}/`.
                                 - **Issue Reporting & Emergency Call:** Direct WhatsApp call link `https://wa.me/918790208445` and dual email/alert notifications.
                                 
                                 **Authentication:**

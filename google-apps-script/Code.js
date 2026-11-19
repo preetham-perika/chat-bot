@@ -22,7 +22,7 @@
  *      apps-script-webhook-url: "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec"
  *
  * That's it! Every document uploaded by any family member will automatically be organized into:
- * Google Drive (hrudaypreetham10@gmail.com) -> chatbot_documents -> {UserName} -> file.pdf
+ * Google Drive (hrudaypreetham10@gmail.com) -> family_chatbot -> {UserName} -> file.pdf
  * =========================================================================================
  */
 
@@ -50,13 +50,32 @@ function doPost(e) {
     var mimeType = payload.mimeType || "application/octet-stream";
     var fileBase64 = payload.fileBase64;
 
-    // 1. Check or create root folder: "chatbot_documents"
-    var rootFolders = DriveApp.getFoldersByName("chatbot_documents");
+    // Handle folder deletion request
+    if (payload.action === "DELETE_FOLDER") {
+      var rootFolders = DriveApp.getFoldersByName("family_chatbot");
+      if (rootFolders.hasNext()) {
+        var rFolder = rootFolders.next();
+        var uFolders = rFolder.getFoldersByName(userName);
+        while (uFolders.hasNext()) {
+          var uFolder = uFolders.next();
+          uFolder.setTrashed(true);
+        }
+      }
+      return responseJson({
+        status: "SUCCESS",
+        action: "FOLDER_DELETED",
+        folder: "family_chatbot/" + userName,
+        message: "Folder 'family_chatbot/" + userName + "' deleted from Google Drive"
+      });
+    }
+
+    // 1. Check or create root folder: "family_chatbot"
+    var rootFolders = DriveApp.getFoldersByName("family_chatbot");
     var rootFolder;
     if (rootFolders.hasNext()) {
       rootFolder = rootFolders.next();
     } else {
-      rootFolder = DriveApp.createFolder("chatbot_documents");
+      rootFolder = DriveApp.createFolder("family_chatbot");
     }
 
     // Automatically share the root folder with Master Admin email if not already shared
@@ -78,7 +97,7 @@ function doPost(e) {
       }
     }
 
-    // 2. Check or create user-specific subfolder: "chatbot_documents/{userName}"
+    // 2. Check or create user-specific subfolder: "family_chatbot/{userName}"
     var userFolders = rootFolder.getFoldersByName(userName);
     var userFolder;
     if (userFolders.hasNext()) {
@@ -92,8 +111,8 @@ function doPost(e) {
       return responseJson({
         status: "SUCCESS",
         action: "FOLDER_CREATED",
-        folder: "chatbot_documents/" + userName,
-        message: "Folder 'chatbot_documents/" + userName + "' ready in Google Drive"
+        folder: "family_chatbot/" + userName,
+        message: "Folder 'family_chatbot/" + userName + "' ready in Google Drive"
       });
     }
 
@@ -106,7 +125,7 @@ function doPost(e) {
       status: "SUCCESS",
       fileId: savedFile.getId(),
       fileName: savedFile.getName(),
-      folder: "chatbot_documents/" + userName,
+      folder: "family_chatbot/" + userName,
       url: savedFile.getUrl()
     });
 

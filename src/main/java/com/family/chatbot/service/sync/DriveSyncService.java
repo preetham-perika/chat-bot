@@ -33,9 +33,17 @@ public interface DriveSyncService {
 
     /**
      * Pre-creates the member folder in Google Drive cloud and local mirror.
-     * Ensures chatbot_documents and chatbot_documents/{folderName} exist immediately upon user creation.
+     * Ensures family_chatbot and family_chatbot/{folderName} exist immediately upon user creation.
      */
     default void createMemberFolder(String folderName) {
+        // default no-op
+    }
+
+    /**
+     * Deletes the member folder from Google Drive cloud and local mirror.
+     * Ensures family_chatbot/{folderName} is removed when a user is deleted.
+     */
+    default void deleteMemberFolder(String folderName) {
         // default no-op
     }
 }
