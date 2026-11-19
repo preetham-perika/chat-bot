@@ -31,9 +31,9 @@ COPY --from=builder --chown=appuser:appgroup /build/target/whatsapp-document-cha
 
 USER appuser
 
-EXPOSE 8080
+EXPOSE 8790
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost:8080/api/health || exit 1
+  CMD wget --quiet --tries=1 --spider http://localhost:8790/api/health || exit 1
 
 ENTRYPOINT ["java", "-XX:+UseG1GC", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]

@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: whatsapp-document-vault
+    env: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: WHATSAPP_ADMIN_PHONE_NUMBER
+        value: "918790208445"
+      - key: WHATSAPP_ADMIN_EMAIL
+        value: "hrudaypreetham10@gmail.com"
+      - key: WHATSAPP_VERIFY_TOKEN
+        value: "FAMILY_DOC_BOT_VERIFY_TOKEN"
+      - key: WHATSAPP_PROVIDER
+        value: "meta"
+      - key: WHATSAPP_ACCESS_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false

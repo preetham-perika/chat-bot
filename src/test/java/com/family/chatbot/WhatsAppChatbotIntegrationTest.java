@@ -44,12 +44,14 @@ public class WhatsAppChatbotIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        if (!familyMemberRepository.existsByPhoneNumber(ADMIN_PHONE)) {
-            whitelistService.addFamilyMember("Master Admin", ADMIN_PHONE, UserRole.ADMIN);
-        }
-        if (!familyMemberRepository.existsByPhoneNumber(MEMBER_PHONE)) {
-            whitelistService.addFamilyMember("Dad", MEMBER_PHONE, UserRole.MEMBER);
-        }
+        familyMemberRepository.findByPhoneNumber(ADMIN_PHONE).ifPresentOrElse(
+                m -> { m.setActive(true); m.setRole(UserRole.ADMIN); familyMemberRepository.save(m); },
+                () -> whitelistService.addFamilyMember("Master Admin", ADMIN_PHONE, UserRole.ADMIN)
+        );
+        familyMemberRepository.findByPhoneNumber(MEMBER_PHONE).ifPresentOrElse(
+                m -> { m.setActive(true); m.setRole(UserRole.MEMBER); familyMemberRepository.save(m); },
+                () -> whitelistService.addFamilyMember("Dad", MEMBER_PHONE, UserRole.MEMBER)
+        );
         whitelistService.updateUserServices(MEMBER_PHONE, java.util.Set.of("AADHAAR", "PAN", "DRIVING_LICENSE", "PASSPORT", "HEALTH", "OTHER"));
     }
 
