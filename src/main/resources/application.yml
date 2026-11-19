@@ -1,0 +1,97 @@
+server:
+  port: 8790
+
+spring:
+  application:
+    name: whatsapp-document-chatbot
+
+  # Persistent embedded H2 database (Zero-cost, fast, file-based persistence)
+  datasource:
+    url: jdbc:h2:file:./data/db/vault;AUTO_SERVER=TRUE
+    driver-class-name: org.h2.Driver
+    username: hruday
+    password: "Hruda@Y@10"
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+# WhatsApp Chatbot Configuration
+whatsapp:
+  # Provider options:
+  # "meta"    -> Official Meta WhatsApp Cloud API (Completely free: 1,000 free conversations/month)
+  # "twilio"  -> Twilio WhatsApp API
+  # "console" -> Local console simulator (no credentials needed, perfect for local offline testing)
+  provider: meta
+
+  # Meta WhatsApp Cloud API credentials (Get from developers.facebook.com)
+  verify-token: FAMILY_DOC_BOT_VERIFY_TOKEN
+  access-token: ""        # Your permanent or temporary Meta Graph API access token
+  phone-number-id: ""     # Your WhatsApp Cloud API Phone Number ID
+  api-version: v20.0
+
+  # Twilio credentials (only if provider=twilio)
+  twilio-account-sid: ""
+  twilio-auth-token: ""
+  twilio-phone-number: ""
+
+  # =========================================================================
+  # ROLE-BASED ACCESS CONTROL & NUMBER-BIAS RESTRICTION
+  # Format: Country code + phone number without '+' or spaces (e.g., 919876543210)
+  # =========================================================================
+  
+  # 1. Master Admin Phone Number & Email:
+  # Has full access to ALL documents uploaded by all family members,
+  # complete search, system audit logs, and Google Drive vault.
+  admin-phone-number: "918790208445"
+  admin-email: "hrudaypreetham10@gmail.com"
+  enable-email-notification: true
+
+  # 2. Whitelisted Family Members:
+  # Can save files/photos, but can ONLY search, list, and view their OWN documents.
+  # Cannot access or view documents uploaded by other family members.
+  whitelist:
+    - "919876543211"
+    - "919876543212"
+
+  # Security response for non-whitelisted numbers
+  notify-unauthorized: true
+  unauthorized-message: "⛔ Access Denied: This WhatsApp bot is private and restricted to authorized family members only."
+
+# REST API Security & AES-256 Encryption at Rest
+security:
+  api-key: "chat-vault-secret-admin-key-2026"
+  enable-api-key-auth: true
+  encryption-key: "ChatBot-Vault-2026-Secret-Key-AES256"
+
+# Local File & Drive Storage Configuration
+storage:
+  # Local root directory where documents and photos are securely saved
+  base-dir: "./data/storage"
+
+  # Google Drive / External Sync Directory:
+  # Point this to your Google Drive Desktop sync folder (e.g. ~/Google Drive/FamilyVault)
+  # Files will be segregated by family member: drive-sync/member_<phone>/documents/
+  drive-sync-dir: "./data/drive-sync"
+  enable-drive-sync: true
+
+  # Max file size: 50MB (default)
+  max-file-size-bytes: 52428800
+
+  # Option B: 100% Free Google Apps Script Cloud Sync (Zero GCP Billing, Zero Cost)
+  # Deploy the provided script in script.google.com under hrudaypreetham10@gmail.com and paste Web App URL below
+  google-drive-email: "hrudaypreetham10@gmail.com"
+  apps-script-webhook-url: "https://script.google.com/macros/s/AKfycby4DE7Wvc7k2w5m7xctWKyWu8favScpZecs9BAwdzLF_NtVH7SJSm0W3TlC4xhV5iRp/exec"
+  apps-script-secret: "family-vault-gas-secret-2026"
+
+# Logging Levels
+logging:
+  level:
+    root: INFO
+    com.family.chatbot: INFO
+    SECURITY_AUDIT: INFO
+    org.springframework.web: WARN

@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  whatsapp-chatbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: whatsapp-family-vault:latest
+    container_name: whatsapp_family_vault
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - WHATSAPP_PROVIDER=meta
+      - WHATSAPP_VERIFY_TOKEN=${WHATSAPP_VERIFY_TOKEN:-FAMILY_DOC_BOT_VERIFY_TOKEN}
+      - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN}
+      - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID}
+      - WHATSAPP_ADMIN_PHONE_NUMBER=${WHATSAPP_ADMIN_PHONE_NUMBER:-919876543210}
+      - WHATSAPP_WHITELIST=${WHATSAPP_WHITELIST:-919876543211,919876543212}
+      - STORAGE_BASE_DIR=/app/data/storage
+      - STORAGE_DRIVE_SYNC_DIR=/app/data/drive-sync
+    volumes:
+      # Persistent local storage (survives container rebuilds)
+      - ./data:/app/data
+      # Rolling log files
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  # Free Open-Source Real-Time Log Viewer (Dozzle)
+  # Access live streaming logs in browser: http://localhost:8888
+  dozzle-log-viewer:
+    image: amir20/dozzle:latest
+    container_name: vault_dozzle_logs
+    restart: unless-stopped
+    ports:
+      - "8888:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro

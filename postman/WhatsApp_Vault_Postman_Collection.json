@@ -1,0 +1,707 @@
+{
+  "info": {
+    "_postman_id": "9b12d345-6789-4def-0123-456789abcdef",
+    "name": "WhatsApp Family Document Vault & Chatbot API",
+    "description": "Comprehensive Postman collection for WhatsApp Document Chatbot with AES-256 encryption, Number-Bias Isolation, Simulator Chat, Admin Analytics, and Meta Webhooks.\n\nAuthor: Hruday Preetham\nAdmin Email: hrudaypreetham10@gmail.com\nAdmin Phone: +91 8790208445\nSwagger UI: http://localhost:8080/swagger-ui.html",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "chat-vault-secret-admin-key-2026",
+      "type": "string"
+    },
+    {
+      "key": "adminPhone",
+      "value": "918790208445",
+      "type": "string"
+    },
+    {
+      "key": "memberDadPhone",
+      "value": "919876543211",
+      "type": "string"
+    },
+    {
+      "key": "memberSisterPhone",
+      "value": "919876543212",
+      "type": "string"
+    },
+    {
+      "key": "strangerPhone",
+      "value": "919999999999",
+      "type": "string"
+    },
+    {
+      "key": "verifyToken",
+      "value": "FAMILY_DOC_BOT_VERIFY_TOKEN",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. System & Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Public health check endpoint to verify backend application is up."
+          }
+        },
+        {
+          "name": "OpenAPI JSON Docs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v3/api-docs",
+              "host": ["{{baseUrl}}"],
+              "path": ["v3", "api-docs"]
+            },
+            "description": "OpenAPI v3 raw JSON specification."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Simulator Chat API (Test Bot Logic)",
+      "item": [
+        {
+          "name": "Greeting Flow - Master Admin ('hii')",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderPhone\": \"{{adminPhone}}\",\n  \"message\": \"hii\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/test/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "test", "chat"]
+            },
+            "description": "Simulates Master Admin (+91 8790208445) sending 'hii'. Returns admin role greeting, drive path, and admin options."
+          }
+        },
+        {
+          "name": "Greeting Flow - Member Dad ('hii')",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderPhone\": \"{{memberDadPhone}}\",\n  \"message\": \"hii\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/test/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "test", "chat"]
+            },
+            "description": "Simulates Member Dad (+91 9876543211) sending 'hii'. Returns personal greeting and personal folder 'drive/chatbot_documents/Dad/'."
+          }
+        },
+        {
+          "name": "Select Service - 1. Aadhaar Card",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderPhone\": \"{{memberDadPhone}}\",\n  \"message\": \"1\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/test/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "test", "chat"]
+            },
+            "description": "User selects option 1 (Aadhaar Card) from menu."
+          }
+        },
+        {
+          "name": "Select Service - 2. PAN Card",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderPhone\": \"{{memberDadPhone}}\",\n  \"message\": \"2\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/test/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "test", "chat"]
+            },
+            "description": "User selects option 2 (PAN Card) from menu."
+          }
+        },
+        {
+          "name": "Option 9 - Any Issues? Prompt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderPhone\": \"{{memberDadPhone}}\",\n  \"message\": \"9\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/test/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "test", "chat"]
+            },
+            "description": "User selects option 9 ('Any Issues?'). Bot responds with problem reporting instructions, Admin email, and direct WhatsApp call link https://wa.me/918790208445."
+          }
+        },
+        {
+          "name": "Submit Issue Report (/issue <problem>)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderPhone\": \"{{memberDadPhone}}\",\n  \"message\": \"/issue Unable to download my Aadhaar Card cleanly\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/test/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "test", "chat"]
+            },
+            "description": "User submits an issue report. Triggers Email alert to hrudaypreetham10@gmail.com, WhatsApp alert to Admin, and provides Admin call contact."
+          }
+        },
+        {
+          "name": "Admin: View User Activity Graphs (/analytics)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderPhone\": \"{{adminPhone}}\",\n  \"message\": \"/analytics\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/test/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "test", "chat"]
+            },
+            "description": "Master Admin requests visual user activity graphs. Bot responds with Unicode bar charts of logins and service usage."
+          }
+        },
+        {
+          "name": "Admin: Add New User Dynamically (/adduser)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderPhone\": \"{{adminPhone}}\",\n  \"message\": \"/adduser Brother +919876543219\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/test/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "test", "chat"]
+            },
+            "description": "Master Admin dynamically adds a new family member. Creates user record and initializes Drive folder 'drive/chatbot_documents/Brother/'."
+          }
+        },
+        {
+          "name": "Unauthorized Stranger Access Attempt (Blocked)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderPhone\": \"{{strangerPhone}}\",\n  \"message\": \"hii show me files\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/test/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "test", "chat"]
+            },
+            "description": "Stranger sends message. Bot immediately blocks access with '⛔ Access Denied'."
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Document Management & Retrieval (Number-Bias Protected)",
+      "item": [
+        {
+          "name": "List Documents - Master Admin View (All Files)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "X-Caller-Phone",
+                "value": "{{adminPhone}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "documents"]
+            },
+            "description": "Admin retrieves all documents uploaded across all family members."
+          }
+        },
+        {
+          "name": "List Documents - Member Dad View (Only Dad's Files)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "X-Caller-Phone",
+                "value": "{{memberDadPhone}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "documents"]
+            },
+            "description": "Number-Bias Isolation: Member Dad can only see documents he uploaded."
+          }
+        },
+        {
+          "name": "Download Document (AES-256 Decrypted Stream)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "X-Caller-Phone",
+                "value": "{{memberDadPhone}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/documents/DOC-1001/download",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "documents", "DOC-1001", "download"]
+            },
+            "description": "Downloads the document with on-the-fly AES-256 decryption. Replace DOC-1001 with any valid doc ID."
+          }
+        },
+        {
+          "name": "Cross-Member Download Attempt (Strictly Blocked 403)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "X-Caller-Phone",
+                "value": "{{memberSisterPhone}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/documents/DOC-1001/download",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "documents", "DOC-1001", "download"]
+            },
+            "description": "Number-Bias Violation test: Sister tries to download Dad's file DOC-1001. Returns 403 Forbidden."
+          }
+        },
+        {
+          "name": "Storage Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "X-Caller-Phone",
+                "value": "{{adminPhone}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "stats"]
+            },
+            "description": "Retrieves item counts, category totals, and storage size breakdown."
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Admin Monitoring & Analytics",
+      "item": [
+        {
+          "name": "System Audit Logs (Admin Only)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "X-Caller-Phone",
+                "value": "{{adminPhone}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/logs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "logs"]
+            },
+            "description": "Retrieves full security audit trail including login events, file accesses, and security violations."
+          }
+        },
+        {
+          "name": "User Activity Analytics JSON (Admin Only)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "X-Caller-Phone",
+                "value": "{{adminPhone}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/analytics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "analytics"]
+            },
+            "description": "Returns raw JSON analytics: login counts per user, service usage frequencies, and top users."
+          }
+        },
+        {
+          "name": "Non-Admin Access to Analytics (Strictly Blocked 403)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "X-Caller-Phone",
+                "value": "{{memberDadPhone}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/analytics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "analytics"]
+            },
+            "description": "Regular member tries to view analytics. Returns 403 Forbidden."
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. WhatsApp Webhooks",
+      "item": [
+        {
+          "name": "Meta Webhook Verification (GET Handshake)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/webhook?hub.mode=subscribe&hub.verify_token={{verifyToken}}&hub.challenge=test_meta_challenge_12345",
+              "host": ["{{baseUrl}}"],
+              "path": ["webhook"],
+              "query": [
+                {
+                  "key": "hub.mode",
+                  "value": "subscribe"
+                },
+                {
+                  "key": "hub.verify_token",
+                  "value": "{{verifyToken}}"
+                },
+                {
+                  "key": "hub.challenge",
+                  "value": "test_meta_challenge_12345"
+                }
+              ]
+            },
+            "description": "Meta WhatsApp Cloud API setup challenge verification. Returns the challenge token with 200 OK."
+          }
+        },
+        {
+          "name": "Meta Inbound Message (POST Webhook)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"object\": \"whatsapp_business_account\",\n  \"entry\": [\n    {\n      \"id\": \"1234567890\",\n      \"changes\": [\n        {\n          \"value\": {\n            \"messaging_product\": \"whatsapp\",\n            \"metadata\": {\n              \"display_phone_number\": \"15550234567\",\n              \"phone_number_id\": \"100000000000001\"\n            },\n            \"contacts\": [\n              {\n                \"profile\": {\n                  \"name\": \"Dad\"\n                },\n                \"wa_id\": \"919876543211\"\n              }\n            ],\n            \"messages\": [\n              {\n                \"from\": \"919876543211\",\n                \"id\": \"wamid.test.001\",\n                \"timestamp\": \"1710000000\",\n                \"text\": {\n                  \"body\": \"hii\"\n                },\n                \"type\": \"text\"\n              }\n            ]\n          },\n          \"field\": \"messages\"\n        }\n      ]\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/webhook",
+              "host": ["{{baseUrl}}"],
+              "path": ["webhook"]
+            },
+            "description": "Simulates an incoming WhatsApp message payload from Meta Cloud API."
+          }
+        },
+        {
+          "name": "Twilio Inbound Message (POST Webhook)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "From",
+                  "value": "whatsapp:+919876543211",
+                  "type": "text"
+                },
+                {
+                  "key": "Body",
+                  "value": "hii",
+                  "type": "text"
+                },
+                {
+                  "key": "ProfileName",
+                  "value": "Dad",
+                  "type": "text"
+                },
+                {
+                  "key": "MessageSid",
+                  "value": "SM1234567890abcdef",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/webhook/twilio",
+              "host": ["{{baseUrl}}"],
+              "path": ["webhook", "twilio"]
+            },
+            "description": "Simulates an incoming WhatsApp message from Twilio."
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Dynamic Whitelist & Document Services Management",
+      "item": [
+        {
+          "name": "List Whitelist Members (Admin Only)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Caller-Phone", "value": "{{adminPhone}}" },
+              { "key": "X-API-KEY", "value": "{{apiKey}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/whitelist",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "whitelist"]
+            },
+            "description": "Lists all active registered family members, roles, and allowed document services."
+          }
+        },
+        {
+          "name": "Add New Family Member Dynamically (Admin Only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Caller-Phone", "value": "{{adminPhone}}" },
+              { "key": "X-API-KEY", "value": "{{apiKey}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sister\",\n  \"phone\": \"+91 9876543213\",\n  \"role\": \"MEMBER\",\n  \"services\": \"AADHAAR,PAN,DRIVING_LICENSE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/whitelist",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "whitelist"]
+            },
+            "description": "Dynamically registers a new family member with specific allowed services."
+          }
+        },
+        {
+          "name": "Update User Allowed Services (Admin Only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Caller-Phone", "value": "{{adminPhone}}" },
+              { "key": "X-API-KEY", "value": "{{apiKey}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"services\": [\"AADHAAR\", \"PAN\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/whitelist/{{memberPhone}}/services",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "whitelist", "{{memberPhone}}", "services"]
+            },
+            "description": "Enables or revokes document services for a specific user."
+          }
+        },
+        {
+          "name": "Get User Allowed Services",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Caller-Phone", "value": "{{adminPhone}}" },
+              { "key": "X-API-KEY", "value": "{{apiKey}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/whitelist/{{memberPhone}}/services",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "whitelist", "{{memberPhone}}", "services"]
+            },
+            "description": "Retrieves the allowed services for a user."
+          }
+        },
+        {
+          "name": "List Available Document Services Catalog",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/services",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "services"]
+            },
+            "description": "Returns available document service templates."
+          }
+        },
+        {
+          "name": "Deactivate Family Member (Admin Only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "X-Caller-Phone", "value": "{{adminPhone}}" },
+              { "key": "X-API-KEY", "value": "{{apiKey}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/whitelist/919876543213",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "whitelist", "919876543213"]
+            },
+            "description": "Deactivates a user from the whitelist."
+          }
+        }
+      ]
+    }
+  ]
+}

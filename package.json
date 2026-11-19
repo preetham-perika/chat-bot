@@ -1,0 +1,12 @@
+{
+  "name": "whatsapp-family-document-vault",
+  "version": "1.0.0",
+  "description": "Family Document Vault with Spring Boot 3 Backend and React.js Frontend",
+  "scripts": {
+    "start": "./start.sh",
+    "dev": "./start.sh",
+    "frontend": "npm --prefix frontend run dev",
+    "backend": "mvn spring-boot:run",
+    "build": "npm --prefix frontend run build && mvn package -DskipTests"
+  }
+}
