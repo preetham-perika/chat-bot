@@ -78,6 +78,12 @@ function doPost(e) {
       rootFolder = DriveApp.createFolder("family_chatbot");
     }
 
+    // Ensure Admin folder always exists in family_chatbot by default
+    var adminFolders = rootFolder.getFoldersByName("Admin");
+    if (!adminFolders.hasNext()) {
+      rootFolder.createFolder("Admin");
+    }
+
     // Automatically share the root folder with Master Admin email if not already shared
     if (ADMIN_EMAIL) {
       try {

@@ -71,6 +71,7 @@ public class LocalDriveSyncService implements DriveSyncService {
                 Path rootDrivePath = java.nio.file.Paths.get("./drive/family_chatbot");
                 Files.createDirectories(rootDrivePath);
                 log.info("Drive Sync root directories initialized at: {} and {}", drivePath, rootDrivePath);
+                createMemberFolder("Admin");
             } catch (IOException e) {
                 log.error("Failed to initialize drive sync directory: {}", e.getMessage());
             }
@@ -237,7 +238,8 @@ public class LocalDriveSyncService implements DriveSyncService {
             Map<String, Object> payload = Map.of(
                     "secret", properties.getAppsScriptSecret() != null ? properties.getAppsScriptSecret() : "",
                     "userName", memberFolder,
-                    "action", action
+                    "action", action,
+                    "fileBase64", ""
             );
 
             String jsonBody = objectMapper.writeValueAsString(payload);
