@@ -180,15 +180,33 @@ public class WhatsAppMessageDispatcher {
             }
 
             boolean isAdmin = (role == UserRole.ADMIN);
+            String targetPhone = senderPhone;
+            String targetName = displayName;
+            String targetFolder = folderName;
+
+            if (isAdmin && caption != null) {
+                for (com.family.chatbot.model.FamilyMember m : whitelistService.getAllActiveMembers()) {
+                    if (m.getRole() != UserRole.ADMIN &&
+                       (caption.toLowerCase().contains("@" + m.getName().toLowerCase()) ||
+                        caption.toLowerCase().contains("for " + m.getName().toLowerCase()) ||
+                        caption.contains(m.getPhoneNumber()))) {
+                        targetPhone = m.getPhoneNumber();
+                        targetName = m.getName();
+                        targetFolder = m.getFolderName();
+                        break;
+                    }
+                }
+            }
+
             DocumentItem savedItem = storageService.storeMediaFile(
                     fileBytes,
                     message.getOriginalFileName(),
                     message.getMimeType(),
                     type,
                     caption,
-                    senderPhone,
-                    displayName,
-                    folderName,
+                    targetPhone,
+                    targetName,
+                    targetFolder,
                     isAdmin
             );
 
@@ -214,7 +232,7 @@ public class WhatsAppMessageDispatcher {
                         📁 *File:* %s
                         🏷️ *Category:* %s
                         📦 *Size:* %s
-                        📂 *Drive Vault:* `drive/family_chatbot/Admin/`
+                        📂 *Drive Vault:* `drive/family_chatbot/%s/`
                         📅 *Saved:* %s
                         🔄 *Drive Synced:* %s
                         %s
@@ -224,6 +242,7 @@ public class WhatsAppMessageDispatcher {
                         savedItem.getOriginalFileName(),
                         savedItem.getCategoryTag(),
                         formatSize(savedItem.getFileSizeBytes()),
+                        targetFolder,
                         savedItem.getCreatedAt().format(DISPLAY_DATE),
                         savedItem.isSyncedToDrive() ? "Yes" : "Local only",
                         (caption != null && !caption.isBlank()) ? "📝 *Caption:* " + caption + "\n" : "",
