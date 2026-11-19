@@ -194,33 +194,27 @@ public class DocumentStorageService {
         item.setFileHash(fileHash);
         item.setCategoryTag(categoryTag);
 
-        // Approval workflow:
-        // Admin uploads are auto-approved; member uploads start as PENDING_APPROVAL
-        if (isAdmin) {
-            item.setStatus(DocumentStatus.APPROVED);
-            item.setApprovedBy(senderPhone);
-            item.setApprovalTimestamp(LocalDateTime.now());
+        // All authorized uploads are auto-approved and synchronized directly into Google Drive
+        item.setStatus(DocumentStatus.APPROVED);
+        item.setApprovedBy(isAdmin ? senderPhone : "MEMBER_UPLOAD");
+        item.setApprovalTimestamp(LocalDateTime.now());
 
-            // Mirror to Google Drive sync folder directly for Admin
-            String targetFolder = (folderName != null && !folderName.isBlank()) ? folderName : senderPhone;
-            if (properties.isEnableDriveSync()) {
-                if (eventPublisher != null) {
-                    eventPublisher.publishEvent(new MediaUploadedEvent(docId, targetFile, subfolder, targetFolder, senderPhone));
-                } else {
-                    try {
-                        Path syncedPath = driveSyncService.syncFile(targetFile, subfolder, targetFolder);
-                        if (syncedPath != null) {
-                            item.setSyncedToDrive(true);
-                            item.setDriveSyncPath(syncedPath.toAbsolutePath().toString());
-                        }
-                    } catch (Exception e) {
-                        log.warn("Drive sync failed for {}: {}", docId, e.getMessage());
+        // Mirror to Google Drive sync folder directly under family_chatbot/{targetFolder}/
+        String targetFolder = (folderName != null && !folderName.isBlank()) ? folderName : senderPhone;
+        if (properties.isEnableDriveSync()) {
+            if (eventPublisher != null) {
+                eventPublisher.publishEvent(new MediaUploadedEvent(docId, targetFile, subfolder, targetFolder, senderPhone));
+            } else {
+                try {
+                    Path syncedPath = driveSyncService.syncFile(targetFile, subfolder, targetFolder);
+                    if (syncedPath != null) {
+                        item.setSyncedToDrive(true);
+                        item.setDriveSyncPath(syncedPath.toAbsolutePath().toString());
                     }
+                } catch (Exception e) {
+                    log.warn("Drive sync failed for {}: {}", docId, e.getMessage());
                 }
             }
-        } else {
-            item.setStatus(DocumentStatus.PENDING_APPROVAL);
-            log.info("Document {} uploaded by member +{} marked as PENDING_APPROVAL", docId, senderPhone);
         }
 
         return repository.save(item);

@@ -31,6 +31,36 @@ public class AdminNotificationService {
     /**
      * Notify Admin via both WhatsApp and Email when a family member uploads a document.
      */
+    public void notifyAdminDocumentUploaded(DocumentItem doc, String memberName, String folderName) {
+        String adminPhone = whitelistService.getAdminNumber();
+        if (adminPhone != null && !adminPhone.isBlank() && !adminPhone.equals(doc.getSenderPhoneNumber())) {
+            String waMessage = String.format("""
+                    🔔 *New Family Document Synced to Vault*
+                    ━━━━━━━━━━━━━━━━━━━━
+                    👤 *Member:* %s (+%s)
+                    📁 *Doc ID:* %s
+                    🏷️ *Category:* %s
+                    📄 *File:* %s
+                    📦 *Size:* %s
+                    📂 *Drive Folder:* `drive/family_chatbot/%s/`
+                    
+                    💡 Only Master Admin can delete: */delete %s*
+                    """,
+                    memberName, doc.getSenderPhoneNumber(),
+                    doc.getDocId(),
+                    doc.getCategoryTag() != null ? doc.getCategoryTag() : doc.getType(),
+                    doc.getOriginalFileName(),
+                    formatSize(doc.getFileSizeBytes()),
+                    folderName, doc.getDocId()
+            );
+            whatsAppProvider.sendTextMessage(adminPhone, waMessage);
+            log.info("Dispatched WhatsApp upload notification to Admin: +{}", adminPhone);
+        }
+    }
+
+    /**
+     * Notify Admin via both WhatsApp and Email when a family member uploads a document.
+     */
     public void notifyAdminPendingApproval(DocumentItem doc, String memberName) {
         String adminPhone = whitelistService.getAdminNumber();
 

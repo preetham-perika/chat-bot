@@ -250,31 +250,28 @@ public class WhatsAppMessageDispatcher {
                 );
                 whatsAppProvider.sendTextMessage(senderPhone, confirmation);
             } else {
-                // Member upload: Notify Admin via WhatsApp & Email
-                adminNotificationService.notifyAdminPendingApproval(savedItem, displayName);
-
+                // Member upload: Auto-synced to Drive! Notify member and alert Admin
                 String memberMsg = String.format("""
-                        ✅ *Document Uploaded for Admin Approval!*
+                        ✅ *Document Saved & Synced Successfully to Google Drive!*
                         ━━━━━━━━━━━━━━━━━━━━
                         🆔 *Doc ID:* %s
                         🏷️ *Category:* %s
                         📁 *File:* %s
                         📦 *Size:* %s
-                        ⏳ *Status:* ⏳ Pending Admin Approval
+                        📂 *Drive Vault:* `drive/family_chatbot/%s/`
                         %s
-                        The Master Admin (+%s) has been alerted via Email & WhatsApp.
-                        Once approved, your document will be synced into your Google Drive vault:
-                        📂 `drive/family_chatbot/%s/`
+                        💡 Reply */download %s* anytime to retrieve this file!
                         """,
                         savedItem.getDocId(),
                         savedItem.getCategoryTag(),
                         savedItem.getOriginalFileName(),
                         formatSize(savedItem.getFileSizeBytes()),
+                        folderName,
                         (caption != null && !caption.isBlank()) ? "📝 *Caption:* " + caption + "\n" : "",
-                        whitelistService.getAdminNumber(),
-                        folderName
+                        savedItem.getDocId()
                 );
                 whatsAppProvider.sendTextMessage(senderPhone, memberMsg);
+                adminNotificationService.notifyAdminDocumentUploaded(savedItem, displayName, folderName);
             }
 
         } catch (Exception e) {
